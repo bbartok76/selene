@@ -10,7 +10,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
 from selene import config
-from selene import helpers
+from selene import screenshots
 from selene.abctypes.conditions import IEntityCondition
 from selene.abctypes.locators import ISeleneWebElementLocator, ISeleneListWebElementLocator
 from selene.abctypes.search_context import ISearchContext
@@ -187,7 +187,7 @@ def _wait_with_screenshot(webdriver, entity, condition, timeout=None, polling=No
     try:
         return wait_for(entity, condition, timeout, polling)
     except TimeoutException as e:
-        screenshot = helpers.take_screenshot(webdriver, )
+        screenshot = screenshots.take_screenshot(webdriver, )
         msg = '''{original_msg}
             screenshot: file://{screenshot}'''.format(original_msg=e.msg, screenshot=screenshot)
         raise TimeoutException(msg, e.screen, e.stacktrace)

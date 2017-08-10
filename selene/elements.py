@@ -4,7 +4,7 @@ from collections import Sequence
 from json import JSONEncoder
 
 from future.utils import with_metaclass
-from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException, StaleElementReferenceException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -296,6 +296,30 @@ class SeleneElement(with_metaclass(DelegatingMeta, IWebElement)):
     def first_child(self):
         return self.element(by.be_first_child())
 
+    # *** Wait for actions, don't throws Selenium exceptions (Explicit waits) ***
+
+    def wait_for(self, condition, timeout=None, polling=None):
+        if timeout is None:
+            timeout = config.timeout
+        if polling is None:
+            polling = config.polling
+        try:
+            wait_for(self, condition, timeout, polling)
+            return True
+        except (NoSuchElementException, TimeoutException, StaleElementReferenceException):
+            return False
+
+    def wait_for_not(self, condition, timeout=None, polling=None):
+        if timeout is None:
+            timeout = config.timeout
+        if polling is None:
+            polling = config.polling
+        try:
+            wait_for(self, not_(condition), timeout, polling)
+            return True
+        except (NoSuchElementException, TimeoutException, StaleElementReferenceException):
+            return False
+
     # *** Asserts (Explicit waits) ***
 
     def should(self, condition, timeout=None):
@@ -440,14 +464,20 @@ class SeleneElement(with_metaclass(DelegatingMeta, IWebElement)):
             condition=be.in_dom)
 
     def is_selected(self):
-        return self._execute_on_webelement(
-            lambda it: it.is_selected(),
-            condition=be.visible)
+        try:
+            return self._execute_on_webelement(
+                lambda it: it.is_selected(),
+                condition=be.visible)
+        except (NoSuchElementException, TimeoutException, StaleElementReferenceException):
+            return False
 
     def is_enabled(self):
-        return self._execute_on_webelement(
-            lambda it: it.is_enabled(),
-            condition=be.visible)
+        try:
+            return self._execute_on_webelement(
+                lambda it: it.is_enabled(),
+                condition=be.visible)
+        except (NoSuchElementException, TimeoutException, StaleElementReferenceException):
+            return False
 
     def send_keys(self, *value):
         self._execute_on_webelement(
@@ -457,9 +487,12 @@ class SeleneElement(with_metaclass(DelegatingMeta, IWebElement)):
 
     # RenderedWebElement Items
     def is_displayed(self):
-        return self._execute_on_webelement(
-            lambda it: it.is_displayed(),
-            condition=be.in_dom)
+        try:
+            return self._execute_on_webelement(
+                lambda it: it.is_displayed(),
+                condition=be.in_dom)
+        except (NoSuchElementException, TimeoutException, StaleElementReferenceException):
+            return False
 
     @property
     def location_once_scrolled_into_view(self):

@@ -5,7 +5,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 import selene.config
 import selene.driver
 import selene.factory
-from selene import helpers
+from selene import screenshots
 from selene.common.none_object import NoneObject
 from selene.elements import SeleneElement, SeleneCollection
 from selene.wait import wait_for
@@ -75,7 +75,7 @@ def take_screenshot(path=None, filename=None):
     if not filename:
         filename = "screen_{id}".format(id=next(selene.config.counter))
 
-    screenshot_path = helpers.take_screenshot(driver(), path, filename)
+    screenshot_path = screenshots.take_screenshot(driver(), path, filename)
 
     global _latest_screenshot
     _latest_screenshot = screenshot_path

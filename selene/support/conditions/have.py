@@ -31,6 +31,14 @@ def css_class(name):
     return conditions.css_class(name)
 
 
+def selectable_option_label(label):
+    return conditions.selectable_option_label(label)
+
+
+def selectable_option_value(value):
+    return conditions.selectable_option_value(value)
+
+
 # *** SeleneCollection conditions ***
 
 

@@ -3,6 +3,7 @@ from abc import ABCMeta, abstractmethod
 import operator
 from future.utils import with_metaclass, lmap
 
+from selenium.webdriver.support.select import Select
 from selene.abctypes.conditions import IEntityCondition
 from selene.abctypes.webdriver import IWebDriver
 from selene.abctypes.webelement import IWebElement
@@ -279,6 +280,36 @@ class Attribute(ElementCondition):
 
 
 attribute = Attribute
+
+
+class SelectableOptionValue(ElementCondition):
+    def __init__(self, expected_selectable_option_value):
+        self.expected_selectable_option_value = expected_selectable_option_value
+
+    def match(self, webelement):
+        select = Select(webelement)
+        actual_selectable_option_values = [option.value.strip() for option in select.options]
+        if self.expected_selectable_option_value not in actual_selectable_option_values:
+            raise ConditionMismatchException(expected=self.expected_selectable_option_value, actual=actual_selectable_option_values)
+        return webelement
+
+
+selectable_option_value = SelectableOptionValue
+
+
+class SelectableOptionLabel(ElementCondition):
+    def __init__(self, expected_selectable_option_label):
+        self.expected_selectable_option_label = expected_selectable_option_label
+
+    def match(self, webelement):
+        select = Select(webelement)
+        actual_selectable_option_labels = [option.text.strip() for option in select.options]
+        if self.expected_selectable_option_label not in actual_selectable_option_labels:
+            raise ConditionMismatchException(expected=self.expected_selectable_option_label, actual=actual_selectable_option_labels)
+        return webelement
+
+
+selectable_option_label = SelectableOptionLabel
 
 
 def value(val):

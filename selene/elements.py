@@ -302,7 +302,7 @@ class SeleneElement(with_metaclass(DelegatingMeta, IWebElement)):
         if timeout is None:
             timeout = config.timeout
         if polling is None:
-            polling = config.polling
+            polling = config.poll_during_waits
         try:
             wait_for(self, condition, timeout, polling)
             return True
@@ -313,7 +313,7 @@ class SeleneElement(with_metaclass(DelegatingMeta, IWebElement)):
         if timeout is None:
             timeout = config.timeout
         if polling is None:
-            polling = config.polling
+            polling = config.poll_during_waits
         try:
             wait_for(self, not_(condition), timeout, polling)
             return True

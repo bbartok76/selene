@@ -13,3 +13,8 @@ reports/
 tests/comparison/
 .cache
 build
+.env
+.tox
+skip-covered
+.coverage
+

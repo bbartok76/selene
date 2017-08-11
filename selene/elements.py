@@ -1,13 +1,13 @@
 import warnings
 from _ast import Tuple, List
 from collections import Sequence
-from json import JSONEncoder
 
 from future.utils import with_metaclass
 from selenium.common.exceptions import NoSuchElementException, TimeoutException, StaleElementReferenceException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.select import Select
 
 from selene import config
 from selene import screenshots
@@ -411,6 +411,33 @@ class SeleneElement(with_metaclass(DelegatingMeta, IWebElement)):
             lambda it: self._actions_chains.move_to_element(it).perform(),
             condition=be.visible)
         return self
+
+    @property
+    def selected_option_label(self):
+        return self._execute_on_webelement(
+            lambda it: Select(it).first_selected_option.text,
+            condition=be.visible)
+
+    @property
+    def selected_option_value(self):
+        return self._execute_on_webelement(
+            lambda it: Select(it).first_selected_option.value,
+            condition=be.visible)
+
+    def select_option_by_label(self, label):
+        # self.should(have.selectable_option_label(label))  # todo: replace with wait_for!
+        self._execute_on_webelement(
+            lambda it: Select(it).select_by_visible_text(label),
+            have.selectable_option_label(label)
+        )
+
+    def select_option_by_value(self, value):
+        # self.should(have.selectable_option_label(label))  # todo: replace with wait_for!
+        self._execute_on_webelement(
+            lambda it: Select(it).select_by_value(value),
+            have.selectable_option_value(value)
+        )
+
 
     # *** ISearchContext methods ***
 
